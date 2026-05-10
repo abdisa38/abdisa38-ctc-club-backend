@@ -9,7 +9,9 @@ const courseModel_1 = __importDefault(require("../models/courseModel"));
 const courseReviewModel_1 = __importDefault(require("../models/courseReviewModel"));
 const userModel_1 = __importDefault(require("../models/userModel"));
 const apiResponse_1 = require("../utils/apiResponse");
-const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// @desc    Create a course
+// @route   POST /api/courses
+// @access  Private/Instructor
 const normalizeAccessMode = (value) => {
     const normalized = String(value || '').trim();
     if (normalized === 'open' || normalized === 'locked' || normalized === 'coming_soon') {
@@ -17,9 +19,6 @@ const normalizeAccessMode = (value) => {
     }
     return undefined;
 };
-// @desc    Create a course
-// @route   POST /api/courses
-// @access  Private/Instructor
 exports.createCourse = (0, express_async_handler_1.default)(async (req, res) => {
     const { title, description, coverImage, category, price, accessMode } = req.body;
     const normalizedPrice = Number(price ?? 0);
@@ -159,6 +158,7 @@ exports.deleteCourse = (0, express_async_handler_1.default)(async (req, res) => 
 // @desc    Manually enroll a student by email
 // @route   POST /api/courses/:id/manual-enroll
 // @access  Private (instructor/admin)
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 exports.manualEnroll = (0, express_async_handler_1.default)(async (req, res) => {
     const normalizedEmail = String(req.body?.email || '').trim().toLowerCase();
     if (!normalizedEmail) {

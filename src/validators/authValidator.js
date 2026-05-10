@@ -14,17 +14,20 @@ exports.registerSchema = zod_1.z.object({
 });
 exports.loginSchema = zod_1.z.object({
     body: zod_1.z.object({
+        email: zod_1.z.string().email('Invalid email address'),
         email: zod_1.z.string().email('Invalid email address').regex(GOOGLE_EMAIL_REGEX, 'Email must be a valid Gmail address'),
         password: zod_1.z.string().min(8, 'Password must be at least 8 characters'),
     }),
 });
 exports.forgotPasswordSchema = zod_1.z.object({
     body: zod_1.z.object({
+        email: zod_1.z.string().email('Invalid email address'),
         email: zod_1.z.string().email('Invalid email address').regex(GOOGLE_EMAIL_REGEX, 'Email must be a valid Gmail address'),
     }),
 });
 exports.resetPasswordSchema = zod_1.z.object({
     body: zod_1.z.object({
+        email: zod_1.z.string().email('Invalid email address'),
         email: zod_1.z.string().email('Invalid email address').regex(GOOGLE_EMAIL_REGEX, 'Email must be a valid Gmail address'),
         code: zod_1.z.string().regex(/^\d{6}$/, 'Reset code must be 6 digits'),
         newPassword: zod_1.z.string().min(8, 'Password must be at least 8 characters'),

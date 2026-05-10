@@ -6,6 +6,11 @@ export declare const createCourseSchema: z.ZodObject<{
         category: z.ZodString;
         coverImage: z.ZodUnion<[z.ZodOptional<z.ZodString>, z.ZodLiteral<"">]>;
         price: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
+        accessMode: z.ZodOptional<z.ZodEnum<{
+            open: "open";
+            locked: "locked";
+            coming_soon: "coming_soon";
+        }>>;
     }, z.core.$strip>;
 }, z.core.$strip>;
 export declare const updateCourseSchema: z.ZodObject<{
@@ -15,6 +20,11 @@ export declare const updateCourseSchema: z.ZodObject<{
         category: z.ZodOptional<z.ZodString>;
         coverImage: z.ZodUnion<[z.ZodOptional<z.ZodString>, z.ZodLiteral<"">]>;
         price: z.ZodOptional<z.ZodNumber>;
+        accessMode: z.ZodOptional<z.ZodEnum<{
+            open: "open";
+            locked: "locked";
+            coming_soon: "coming_soon";
+        }>>;
     }, z.core.$strip>;
 }, z.core.$strip>;
 //# sourceMappingURL=courseValidator.d.ts.map

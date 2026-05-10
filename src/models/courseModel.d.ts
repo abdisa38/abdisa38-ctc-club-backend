@@ -14,6 +14,7 @@ export interface ICourse extends Document {
     currency: string;
     isPublished: boolean;
     status: 'draft' | 'published' | 'archived';
+    accessMode?: 'open' | 'locked' | 'coming_soon';
     level: 'beginner' | 'intermediate' | 'advanced';
     xpReward: number;
     prerequisites: string[];

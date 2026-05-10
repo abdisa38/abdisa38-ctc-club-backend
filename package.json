@@ -1,23 +1,24 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "CTC Club Backend API",
+  "main": "dist/server.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "heroku-postbuild": "npm run build",
-    "seed": "tsx src/seeder.ts"
+    "seed": "tsx src/seeder.ts",
+    "heroku-postbuild": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "engines": {
-    "node": "18.x"
-  },
   "dependencies": {
     "@types/nodemailer": "^8.0.0",
     "bcrypt": "^6.0.0",
@@ -28,7 +29,9 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.4.1",
     "multer": "^2.1.1",
-    "nodemailer": "^8.0.5"
+    "nodemailer": "^8.0.5",
+    "zod": "^4.4.3",
+    "typescript": "^6.0.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -40,7 +43,6 @@
     "@types/node": "^25.5.2",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "tsx": "^4.21.0"
   }
 }

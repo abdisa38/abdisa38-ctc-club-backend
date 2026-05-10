@@ -1,0 +1,57 @@
+🚀 FIXED DEPLOYMENT INSTRUCTIONS
+================================
+
+PROBLEM IDENTIFIED:
+You were trying to deploy the entire CTC-Club1 project (which includes frontend)
+instead of just the backend. Heroku got confused and tried to build the frontend.
+
+SOLUTION:
+Deploy ONLY the backend directory to Heroku.
+
+STEP-BY-STEP INSTRUCTIONS:
+=========================
+
+1. Open Command Prompt:
+   - Press Windows Key + R
+   - Type "cmd" and press Enter
+
+2. Navigate to the BACKEND directory (very important!):
+   cd Documents
+   cd "CTC Club1"
+   cd CTC-Club1
+   cd backend
+
+3. Verify you're in the right place:
+   verify-backend.bat
+
+4. Deploy the backend only:
+   deploy-backend-only.bat
+
+That's it! The new script will:
+✅ Check you're in the backend directory
+✅ Verify it's the backend package.json (not frontend)
+✅ Login to Heroku
+✅ Create/update the app
+✅ Set environment variables
+✅ Deploy ONLY the backend
+✅ Test the deployment
+
+WHAT WENT WRONG BEFORE:
+- Heroku saw the frontend package.json in CTC-Club1 root
+- It tried to build a Vite frontend project
+- But we want to deploy the Node.js backend
+
+WHAT'S FIXED NOW:
+- Script ensures we're in the backend directory
+- Deploys only the backend code
+- Ignores the frontend completely
+
+YOUR API WILL BE AT:
+https://ctc-club-platform.herokuapp.com/api
+
+TROUBLESHOOTING:
+- If you get "app already exists" error, that's okay - continue
+- If build fails, run verify-backend.bat first
+- Check logs with: heroku logs --tail --app ctc-club-platform
+
+The deployment should work now! 🎉

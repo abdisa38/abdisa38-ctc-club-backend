@@ -9,6 +9,7 @@ exports.createCourseSchema = zod_1.z.object({
         category: zod_1.z.string().min(2, 'Category is required'),
         coverImage: zod_1.z.string().url('Must be a valid URL').optional().or(zod_1.z.literal('')),
         price: zod_1.z.number().min(0, 'Price must be a positive number').optional().default(0),
+        accessMode: zod_1.z.enum(['open', 'locked', 'coming_soon']).optional(),
     }),
 });
 exports.updateCourseSchema = zod_1.z.object({
@@ -18,6 +19,7 @@ exports.updateCourseSchema = zod_1.z.object({
         category: zod_1.z.string().min(2).optional(),
         coverImage: zod_1.z.string().url('Must be a valid URL').optional().or(zod_1.z.literal('')),
         price: zod_1.z.number().min(0).optional(),
+        accessMode: zod_1.z.enum(['open', 'locked', 'coming_soon']).optional(),
     }),
 });
 //# sourceMappingURL=courseValidator.js.map

@@ -1,1 +1,1 @@
-{"version":3,"file":"uploadRoutes.d.ts","sourceRoot":"","sources":["../routes/uploadRoutes.ts"],"names":[],"mappings":"AAAA"}
+{"version":3,"file":"uploadRoutes.d.ts","sourceRoot":"","sources":["uploadRoutes.ts"],"names":[],"mappings":"AAKA,QAAA,MAAM,MAAM,4CAAmB,CAAC;AAmBhC,eAAe,MAAM,CAAC"}

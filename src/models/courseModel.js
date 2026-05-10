@@ -104,6 +104,11 @@ const courseSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
+    accessMode: {
+        type: String,
+        enum: ['open', 'locked', 'coming_soon'],
+        default: 'open',
+    },
     status: {
         type: String,
         enum: ['draft', 'published', 'archived'],

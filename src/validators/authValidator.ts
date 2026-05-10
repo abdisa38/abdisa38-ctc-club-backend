@@ -14,7 +14,6 @@ export const registerSchema = z.object({
 
 export const loginSchema = z.object({
   body: z.object({
-    email: z.string().email('Invalid email address'),
     email: z.string().email('Invalid email address').regex(GOOGLE_EMAIL_REGEX, 'Email must be a valid Gmail address'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
   }),
@@ -22,14 +21,12 @@ export const loginSchema = z.object({
 
 export const forgotPasswordSchema = z.object({
   body: z.object({
-    email: z.string().email('Invalid email address'),
     email: z.string().email('Invalid email address').regex(GOOGLE_EMAIL_REGEX, 'Email must be a valid Gmail address'),
   }),
 });
 
 export const resetPasswordSchema = z.object({
   body: z.object({
-    email: z.string().email('Invalid email address'),
     email: z.string().email('Invalid email address').regex(GOOGLE_EMAIL_REGEX, 'Email must be a valid Gmail address'),
     code: z.string().regex(/^\d{6}$/, 'Reset code must be 6 digits'),
     newPassword: z.string().min(8, 'Password must be at least 8 characters'),

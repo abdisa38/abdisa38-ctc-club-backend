@@ -221,7 +221,7 @@ export const manualEnroll = asyncHandler(async (req: AuthRequest, res: Response)
     });
   }
 
-  sendSuccess(res, {}, { message: `Successfully enrolled ${student.firstName} (${student.email})` });
+  sendSuccess(res, {}, { message: `Successfully enrolled ${student.name} (${student.email})` });
 });
 
 // @desc    Approve a student email for manual unlock
