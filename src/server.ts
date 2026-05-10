@@ -36,13 +36,27 @@ app.use(cookieParser());
 
 // Enable CORS
 app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'http://localhost:3000',
-        'https://ctc-club-frontend-zvt6.vercel.app',
-        'https://ctc-club-frontend-m5ko.vercel.app',
-        process.env.CLIENT_URL || '',
-    ].filter(Boolean),
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        const allowedOrigins = [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'https://ctc-club-frontend-zvt6.vercel.app',
+            'https://ctc-club-frontend-m5ko.vercel.app',
+            process.env.CLIENT_URL || '',
+        ];
+        
+        // Allow any Vercel deployment URL for this project
+        const isVercelDomain = origin.includes('ctc-club-frontend') && origin.includes('vercel.app');
+        
+        if (allowedOrigins.indexOf(origin) !== -1 || isVercelDomain) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
