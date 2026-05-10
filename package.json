@@ -4,7 +4,7 @@
   "description": "CTC Club Backend API",
   "main": "dist/server.js",
   "engines": {
-    "node": ">=18.0.0",
+    "node": "24.x",
     "npm": ">=8.0.0"
   },
   "scripts": {
@@ -26,12 +26,13 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
+    "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.4.1",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.5",
-    "zod": "^4.4.3",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
