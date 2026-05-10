@@ -39,9 +39,13 @@ app.use(cors({
     origin: [
         'http://localhost:5173',
         'http://localhost:3000',
+        'https://ctc-club-frontend-zvt6.vercel.app',
+        'https://ctc-club-frontend-m5ko.vercel.app',
         process.env.CLIENT_URL || '',
     ].filter(Boolean),
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 }));
 
 // Basic Route for testing
