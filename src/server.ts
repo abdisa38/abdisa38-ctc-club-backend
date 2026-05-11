@@ -43,6 +43,10 @@ app.use(cors({
 }));
 
 // Basic Route for testing
+app.get('/', (req: Request, res: Response) => {
+    res.json({ message: 'CTC Club Backend is running successfully!' });
+});
+
 app.get('/api', (req: Request, res: Response) => {
     res.json({ message: 'Welcome to the CTC Club API' });
 });
