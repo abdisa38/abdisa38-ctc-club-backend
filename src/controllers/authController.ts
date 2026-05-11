@@ -315,7 +315,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   });
 
   if (user) {
-    generateToken(res, user._id.toString(), user.role);
+    const token = generateToken(res, user._id.toString(), user.role);
 
     sendSuccess(res, {
       _id: user._id,
@@ -325,6 +325,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
       avatar: user.avatar,
       isPremium: user.isPremium,
       premiumActivatedAt: user.premiumActivatedAt,
+      token, // Include token in response for localStorage storage
     }, { statusCode: 201, message: 'User registered successfully' });
   } else {
     res.status(400);
@@ -342,7 +343,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await User.findOne({ email: normalizedEmail });
 
   if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id.toString(), user.role);
+    const token = generateToken(res, user._id.toString(), user.role);
 
     user.lastLogin = new Date();
     await user.save();
@@ -355,6 +356,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
       avatar: user.avatar,
       isPremium: user.isPremium,
       premiumActivatedAt: user.premiumActivatedAt,
+      token, // Include token in response for localStorage storage
     }, { message: 'Login successful' });
   } else {
     res.status(401);

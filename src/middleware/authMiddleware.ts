@@ -9,7 +9,14 @@ export interface AuthRequest extends Request {
 
 export const protect = expressAsyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
   let token;
+  
+  // Check for token in cookie first
   token = req.cookies.jwt;
+  
+  // If no cookie, check Authorization header for Bearer token
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
 
   if (token) {
     try {
@@ -28,7 +35,12 @@ export const protect = expressAsyncHandler(async (req: AuthRequest, res: Respons
 });
 
 export const optionalProtect = expressAsyncHandler(async (req: AuthRequest, _res: Response, next: NextFunction) => {
-  const token = req.cookies.jwt;
+  let token = req.cookies.jwt;
+  
+  // If no cookie, check Authorization header for Bearer token
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
 
   if (!token) {
     next();
