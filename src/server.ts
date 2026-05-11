@@ -36,10 +36,17 @@ app.use(cookieParser());
 
 // Enable CORS - Allow all origins for now to fix connection issues
 app.use(cors({
-    origin: true, // This allows all origins
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // Allow any origin for now, but we'll be more specific later
+        callback(null, true);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    exposedHeaders: ['Set-Cookie'],
 }));
 
 // Basic Route for testing
