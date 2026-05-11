@@ -426,12 +426,18 @@ export const googleOAuthCallback = asyncHandler(async (req: Request, res: Respon
     user.lastLogin = new Date();
     await user.save();
 
-    generateToken(res, user._id.toString(), user.role);
-    res.redirect(buildClientAuthRedirectUrl({
+    const token = generateToken(res, user._id.toString(), user.role);
+    
+    // Also include token in URL for cross-domain OAuth
+    const redirectUrl = buildClientAuthRedirectUrl({
       status: 'success',
       email: user.email,
       provider: 'google',
-    }));
+    });
+    const urlWithToken = new URL(redirectUrl);
+    urlWithToken.searchParams.set('token', token);
+    
+    res.redirect(urlWithToken.toString());
   } catch (error) {
     res.redirect(buildClientAuthRedirectUrl({
       status: 'error',
@@ -503,12 +509,18 @@ export const githubOAuthCallback = asyncHandler(async (req: Request, res: Respon
     user.lastLogin = new Date();
     await user.save();
 
-    generateToken(res, user._id.toString(), user.role);
-    res.redirect(buildClientAuthRedirectUrl({
+    const token = generateToken(res, user._id.toString(), user.role);
+    
+    // Also include token in URL for cross-domain OAuth
+    const redirectUrl = buildClientAuthRedirectUrl({
       status: 'success',
       email: user.email,
       provider: 'github',
-    }));
+    });
+    const urlWithToken = new URL(redirectUrl);
+    urlWithToken.searchParams.set('token', token);
+    
+    res.redirect(urlWithToken.toString());
   } catch (error) {
     res.redirect(buildClientAuthRedirectUrl({
       status: 'error',
