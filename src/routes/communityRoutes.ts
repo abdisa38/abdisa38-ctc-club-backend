@@ -7,7 +7,10 @@ import {
   getCommunityReplies,
   addCommunityReply,
   pinCommunityPost,
+  editCommunityPost,
   deleteCommunityPost,
+  editCommunityReply,
+  deleteCommunityReply,
 } from '../controllers/communityController';
 
 const router = express.Router();
@@ -18,6 +21,9 @@ router.post('/posts/:postId/vote', protect as any, voteCommunityPost as any);
 router.get('/posts/:postId/replies', protect as any, getCommunityReplies as any);
 router.post('/posts/:postId/replies', protect as any, addCommunityReply as any);
 router.patch('/posts/:postId/pin', protect as any, pinCommunityPost as any);
+router.put('/posts/:postId', protect as any, editCommunityPost as any);
 router.delete('/posts/:postId', protect as any, deleteCommunityPost as any);
+router.put('/posts/:postId/replies/:replyId', protect as any, editCommunityReply as any);
+router.delete('/posts/:postId/replies/:replyId', protect as any, deleteCommunityReply as any);
 
 export default router;

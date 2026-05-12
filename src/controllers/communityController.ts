@@ -272,6 +272,43 @@ export const pinCommunityPost = asyncHandler(async (req: AuthRequest, res: Respo
   sendSuccess(res, populated || post, { message: 'Post pin state updated' });
 });
 
+// @desc    Edit a community post
+// @route   PUT /api/community/posts/:postId
+// @access  Private
+export const editCommunityPost = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const postId = typeof req.params.postId === 'string' ? req.params.postId : '';
+  const { title, content, tags } = req.body;
+
+  if (!postId) {
+    res.status(400);
+    throw new Error('Post ID is required');
+  }
+
+  const post = await CommunityPost.findById(postId);
+  if (!post) {
+    res.status(404);
+    throw new Error('Post not found');
+  }
+
+  // Only the post owner can edit (not instructors/admins)
+  if (post.user?.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error('Not authorized to edit this post');
+  }
+
+  if (title) post.title = title;
+  if (content) post.content = content;
+  if (Array.isArray(tags)) post.tags = tags;
+
+  await post.save();
+
+  const populated = await CommunityPost.findById(post._id)
+    .populate('user', 'name avatar role')
+    .populate('course', 'title');
+
+  sendSuccess(res, populated || post, { message: 'Post updated successfully' });
+});
+
 // @desc    Soft delete a community post
 // @route   DELETE /api/community/posts/:postId
 // @access  Private
@@ -299,4 +336,83 @@ export const deleteCommunityPost = asyncHandler(async (req: AuthRequest, res: Re
   await post.save();
 
   sendSuccess(res, null, { message: 'Post deleted successfully' });
+});
+
+// @desc    Edit a reply
+// @route   PUT /api/community/posts/:postId/replies/:replyId
+// @access  Private
+export const editCommunityReply = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const replyId = typeof req.params.replyId === 'string' ? req.params.replyId : '';
+  const { content } = req.body;
+
+  if (!replyId) {
+    res.status(400);
+    throw new Error('Reply ID is required');
+  }
+
+  if (!content || !content.trim()) {
+    res.status(400);
+    throw new Error('Reply content is required');
+  }
+
+  const reply = await CommunityReply.findById(replyId);
+  if (!reply) {
+    res.status(404);
+    throw new Error('Reply not found');
+  }
+
+  // Only the reply owner can edit
+  if (reply.user?.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error('Not authorized to edit this reply');
+  }
+
+  reply.content = content;
+  await reply.save();
+
+  const populated = await CommunityReply.findById(reply._id).populate('user', 'name avatar role');
+  sendSuccess(res, populated || reply, { message: 'Reply updated successfully' });
+});
+
+// @desc    Delete a reply
+// @route   DELETE /api/community/posts/:postId/replies/:replyId
+// @access  Private
+export const deleteCommunityReply = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const postId = typeof req.params.postId === 'string' ? req.params.postId : '';
+  const replyId = typeof req.params.replyId === 'string' ? req.params.replyId : '';
+
+  if (!replyId) {
+    res.status(400);
+    throw new Error('Reply ID is required');
+  }
+
+  const reply = await CommunityReply.findById(replyId);
+  if (!reply) {
+    res.status(404);
+    throw new Error('Reply not found');
+  }
+
+  // Students can only delete their own replies
+  // Instructors and admins can delete any reply
+  const isOwner = reply.user?.toString() === req.user._id.toString();
+  const canDelete = isOwner || req.user.role === 'instructor' || req.user.role === 'admin';
+
+  if (!canDelete) {
+    res.status(403);
+    throw new Error('Not authorized to delete this reply');
+  }
+
+  reply.isDeleted = true;
+  await reply.save();
+
+  // Update reply count on the post
+  if (postId) {
+    const post = await CommunityPost.findById(postId);
+    if (post && post.repliesCount > 0) {
+      post.repliesCount = post.repliesCount - 1;
+      await post.save();
+    }
+  }
+
+  sendSuccess(res, null, { message: 'Reply deleted successfully' });
 });
