@@ -684,8 +684,15 @@ export const updateUserProfile = asyncHandler(async (req: AuthRequest, res: Resp
   }
 
   if (Object.prototype.hasOwnProperty.call(req.body || {}, 'avatar')) {
-    const normalizedAvatar = normalizeHttpUrl(req.body?.avatar);
-    user.avatar = normalizedAvatar || DEFAULT_AVATAR_URL;
+    const rawAvatar = String(req.body?.avatar ?? '').trim();
+    if (!rawAvatar) {
+      user.avatar = DEFAULT_AVATAR_URL;
+    } else if (rawAvatar.startsWith('data:image/')) {
+      user.avatar = rawAvatar;
+    } else {
+      const normalizedAvatar = normalizeHttpUrl(rawAvatar);
+      user.avatar = normalizedAvatar || DEFAULT_AVATAR_URL;
+    }
   }
 
   if (req.body?.socialLinks && typeof req.body.socialLinks === 'object') {

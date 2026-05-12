@@ -39,6 +39,18 @@ const optionalUrl = z
   .optional()
   .refine((value) => !value || /^https?:\/\/.+/i.test(value), 'Invalid URL');
 
+const optionalAvatar = z
+  .string()
+  .trim()
+  .optional()
+  .refine(
+    (value) =>
+      !value ||
+      /^https?:\/\/.+/i.test(value) ||
+      /^data:image\/[a-zA-Z0-9+.-]+;base64,/.test(value),
+    'Invalid avatar image'
+  );
+
 export const updateProfileSettingsSchema = z.object({
   body: z.object({
     name: z.string().trim().min(2).max(80).optional(),
@@ -46,7 +58,7 @@ export const updateProfileSettingsSchema = z.object({
     lastName: z.string().trim().max(40).optional(),
     headline: z.string().trim().max(120).optional(),
     bio: z.string().trim().max(2000).optional(),
-    avatar: optionalUrl,
+    avatar: optionalAvatar,
     socialLinks: z.object({
       github: optionalUrl,
       linkedin: optionalUrl,
