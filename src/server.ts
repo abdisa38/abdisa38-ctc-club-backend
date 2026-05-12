@@ -25,8 +25,9 @@ connectDB();
 
 const app: Application = express();
 
-// Body parser
-app.use(express.json());
+// Body parser with increased limit for base64 images
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve uploaded lesson assets
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
