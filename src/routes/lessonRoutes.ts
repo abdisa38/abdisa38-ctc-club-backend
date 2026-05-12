@@ -5,6 +5,7 @@ import {
   updateLesson,
   deleteLesson,
   getLessonsByCourse,
+  toggleLessonCompletion,
 } from '../controllers/lessonController';
 
 // We add mergeParams so that we can access the :courseId if it's passed from the courseRouter
@@ -19,5 +20,9 @@ router.route('/')
 router.route('/:lessonId')
   .put(protect as any, authorizeRoles('instructor', 'admin'), updateLesson as any)
   .delete(protect as any, authorizeRoles('instructor', 'admin'), deleteLesson as any);
+
+// Toggle lesson completion status
+router.route('/:lessonId/complete')
+  .post(protect as any, toggleLessonCompletion as any);
 
 export default router;

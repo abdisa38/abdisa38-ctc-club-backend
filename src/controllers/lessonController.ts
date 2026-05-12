@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware';
 import Lesson from '../models/lessonModel';
 import Course from '../models/courseModel';
+import Progress from '../models/progressModel';
 import { sendSuccess } from '../utils/apiResponse';
 
 // @desc    Add a lesson to a course
@@ -165,6 +166,89 @@ export const getLessonsByCourse = async (req: AuthRequest, res: Response) => {
     // For a fully secure app, check if user is enrolled. For now, just return them.
     const lessons = await Lesson.find({ course: courseId }).sort({ order: 1 });
     sendSuccess(res, lessons);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Toggle lesson completion status
+// @route   POST /api/courses/:courseId/lessons/:lessonId/complete
+// @access  Private/Student
+export const toggleLessonCompletion = async (req: AuthRequest, res: Response) => {
+  try {
+    const courseId = typeof req.params.courseId === 'string' ? req.params.courseId : '';
+    const lessonId = typeof req.params.lessonId === 'string' ? req.params.lessonId : '';
+
+    if (!courseId || !lessonId) {
+      return res.status(400).json({ message: 'Course ID and Lesson ID are required' });
+    }
+
+    // Verify lesson exists
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ message: 'Lesson not found' });
+    }
+
+    // Verify course exists
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    // Find or create progress record
+    let progress = await Progress.findOne({
+      user: req.user._id,
+      course: courseId,
+    });
+
+    if (!progress) {
+      // Create new progress record if it doesn't exist
+      progress = await Progress.create({
+        user: req.user._id,
+        course: courseId,
+        completedLessons: [lessonId],
+        completedQuizzes: [],
+        progressPercentage: 0,
+        isCompleted: false,
+      });
+    } else {
+      // Toggle lesson completion
+      const lessonIndex = progress.completedLessons.findIndex(
+        (id) => id.toString() === lessonId
+      );
+
+      if (lessonIndex > -1) {
+        // Lesson is already completed, remove it
+        progress.completedLessons.splice(lessonIndex, 1);
+      } else {
+        // Lesson is not completed, add it
+        progress.completedLessons.push(lessonId as any);
+      }
+    }
+
+    // Calculate progress percentage
+    const totalLessons = await Lesson.countDocuments({ course: courseId });
+    const completedCount = progress.completedLessons.length;
+    progress.progressPercentage = totalLessons > 0 
+      ? Math.round((completedCount / totalLessons) * 100) 
+      : 0;
+
+    // Check if course is completed
+    progress.isCompleted = progress.progressPercentage === 100;
+    if (progress.isCompleted && !progress.completionDate) {
+      progress.completionDate = new Date();
+    } else if (!progress.isCompleted && progress.completionDate) {
+      delete (progress as any).completionDate;
+    }
+
+    await progress.save();
+
+    sendSuccess(res, {
+      lessonId,
+      isCompleted: progress.completedLessons.some((id) => id.toString() === lessonId),
+      progressPercentage: progress.progressPercentage,
+      completedLessons: progress.completedLessons,
+    }, { message: 'Lesson completion status updated' });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
