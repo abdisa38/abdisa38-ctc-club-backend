@@ -675,6 +675,10 @@ export const updateUserProfile = asyncHandler(async (req: AuthRequest, res: Resp
     user.name = nextName;
   }
 
+  if (Object.prototype.hasOwnProperty.call(req.body || {}, 'nickname')) {
+    user.nickname = normalizeText(req.body?.nickname, 40);
+  }
+
   if (Object.prototype.hasOwnProperty.call(req.body || {}, 'headline')) {
     user.headline = normalizeText(req.body?.headline, 120);
   }
