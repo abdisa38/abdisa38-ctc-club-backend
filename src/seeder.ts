@@ -15,13 +15,29 @@ const importData = async () => {
     await Course.deleteMany();
     await Progress.deleteMany();
 
-    const users = [
-      {
+    // Reset admin credentials
+    console.log('Resetting admin credentials...');
+    const adminEmail = 'abdisaawel9@gmail.com';
+    let adminUser = await User.findOne({ email: adminEmail });
+    
+    if (adminUser) {
+      // Update existing admin
+      adminUser.role = 'admin';
+      adminUser.password = 'admin123'; // Will be hashed by pre-save middleware
+      await adminUser.save();
+      console.log(`✓ Admin credentials updated for: ${adminEmail}`);
+    } else {
+      // Create new admin
+      adminUser = await User.create({
         name: 'CTC Platform Admin',
-        email: 'admin@ctc.com',
+        email: adminEmail,
         password: 'admin123',
         role: 'admin',
-      },
+      });
+      console.log(`✓ Admin user created: ${adminEmail}`);
+    }
+
+    const users = [
       {
         name: 'Amira Hassan',
         email: 'amira@ctc.com',
@@ -42,7 +58,7 @@ const importData = async () => {
       }
     ];
 
-    const createdUsersByEmail: Record<string, any> = {};
+    const createdUsersByEmail: Record<string, any> = { [adminEmail]: adminUser };
     for (const user of users) {
       let existingUser = await User.findOne({ email: user.email });
       if (!existingUser) {
