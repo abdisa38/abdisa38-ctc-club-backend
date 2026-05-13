@@ -5,6 +5,7 @@ import {
 	getUserProfile,
 	logoutUser,
 	getUsers,
+	createUserByAdmin,
 	updateUserRole,
 	updateUserStatus,
 	softDeleteUser,
@@ -66,6 +67,7 @@ router.post('/favorites/resources/:resourceId', protect as any, addFavoriteResou
 router.delete('/favorites/resources/:resourceId', protect as any, removeFavoriteResource as any);
 
 router.get('/users', protect as any, authorizeRoles('admin'), getUsers as any);
+router.post('/users', protect as any, authorizeRoles('admin'), createUserByAdmin as any);
 router.put('/users/:id/role', protect as any, authorizeRoles('admin'), updateUserRole as any);
 router.put('/users/:id/status', protect as any, authorizeRoles('admin'), updateUserStatus as any);
 router.delete('/users/:id', protect as any, authorizeRoles('admin'), softDeleteUser as any);

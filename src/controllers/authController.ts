@@ -1075,6 +1075,49 @@ export const removeFavoriteResource = asyncHandler(async (req: AuthRequest, res:
   }, { message: 'Resource removed from favorites' });
 });
 
+// @desc    Create user by admin
+// @route   POST /api/auth/users
+// @access  Private/Admin
+export const createUserByAdmin = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const { name, email, password, role } = req.body;
+  
+  if (!name || !email || !password) {
+    res.status(400);
+    throw new Error('Name, email, and password are required');
+  }
+
+  const normalizedEmail = normalizeEmail(email);
+
+  const userExists = await User.findOne({ email: normalizedEmail });
+  if (userExists) {
+    res.status(400);
+    throw new Error('User already exists');
+  }
+
+  const validRole = role && ['student', 'instructor', 'admin'].includes(role) ? role : 'student';
+
+  const user = await User.create({
+    name,
+    email: normalizedEmail,
+    password,
+    role: validRole,
+  });
+
+  if (user) {
+    sendSuccess(res, {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+      isActive: user.isActive,
+    }, { statusCode: 201, message: 'User created successfully' });
+  } else {
+    res.status(400);
+    throw new Error('Invalid user data');
+  }
+});
+
 // @desc    Get users for admin table
 // @route   GET /api/auth/users
 // @access  Private/Admin
