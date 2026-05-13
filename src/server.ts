@@ -16,6 +16,7 @@ import communityRoutes from './routes/communityRoutes';
 import notificationRoutes from './routes/notificationRoutes';
 import uploadRoutes from './routes/uploadRoutes';
 import eventRoutes from './routes/eventRoutes';
+import resourceRoutes from './routes/resourceRoutes';
 
 // Load env vars
 dotenv.config();
@@ -91,6 +92,7 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/events', eventRoutes);
 // For operations purely based on LessonId (Update, Delete a lesson)
 app.use('/api/lessons', lessonRoutes);
+app.use('/api/resources', resourceRoutes);
 
 // Error handling middleware
 app.use(notFound);
