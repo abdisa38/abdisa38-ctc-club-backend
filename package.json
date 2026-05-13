@@ -13,7 +13,6 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "seed": "tsx src/seeder.ts",
-    "restore": "tsx restore-courses.ts",
     "heroku-postbuild": "npm run build"
   },
   "keywords": [],
