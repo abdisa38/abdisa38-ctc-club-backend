@@ -9,6 +9,7 @@ export interface IUser extends Document {
   role: 'student' | 'instructor' | 'admin';
   oauthProvider?: 'google' | 'github';
   avatar?: string;
+  nickname?: string;
   headline?: string;
   bio?: string;
   socialLinks?: {
@@ -80,6 +81,11 @@ const userSchema = new Schema<IUser>(
     avatar: {
       type: String,
       default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
+    },
+    nickname: {
+      type: String,
+      trim: true,
+      default: '',
     },
     headline: {
       type: String,
