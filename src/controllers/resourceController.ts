@@ -8,7 +8,13 @@ import { sendSuccess } from '../utils/apiResponse';
 // @route   DELETE /api/resources/:resourceId
 // @access  Private/Admin
 export const deleteResource = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
-  const { resourceId } = req.params;
+  const resourceId = req.params.resourceId;
+
+  // Validate resourceId is a string
+  if (!resourceId || typeof resourceId !== 'string') {
+    res.status(400);
+    throw new Error('Invalid resource ID');
+  }
 
   // Resource ID format: attachment-{lessonId}-{index}
   const match = resourceId.match(/^attachment-([a-fA-F0-9]{24})-(\d+)$/);
@@ -19,6 +25,13 @@ export const deleteResource = asyncHandler(async (req: AuthRequest, res: Respons
   }
 
   const [, lessonId, indexStr] = match;
+
+  // Validate indexStr exists
+  if (!indexStr) {
+    res.status(400);
+    throw new Error('Invalid resource ID format');
+  }
+
   const attachmentIndex = parseInt(indexStr, 10);
 
   // Find the lesson
