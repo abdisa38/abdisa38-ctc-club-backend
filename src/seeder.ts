@@ -60,12 +60,41 @@ const importData = async () => {
 
     const createdUsersByEmail: Record<string, any> = { [adminEmail]: adminUser };
     for (const user of users) {
-      let existingUser = await User.findOne({ email: user.email });
-      if (!existingUser) {
-        existingUser = await User.create(user);
-        console.log(`Created ${user.role}: ${user.email}`);
+      try {
+        // Direct query bypassing middleware - check for any user with this email
+        const existingUserDoc = await User.collection.findOne({ email: user.email });
+        
+        if (!existingUserDoc) {
+          // No user exists, create new one
+          const newUser = await User.create(user);
+          console.log(`Created ${user.role}: ${user.email}`);
+          createdUsersByEmail[user.email] = newUser;
+        } else if (existingUserDoc.isDeleted) {
+          // User exists but is soft-deleted, restore it using direct collection update
+          await User.collection.updateOne(
+            { _id: existingUserDoc._id },
+            { 
+              $set: {
+                isDeleted: false,
+                name: user.name,
+                role: user.role
+              }
+            }
+          );
+          // Now fetch the restored user
+          const restoredUser = await User.findById(existingUserDoc._id);
+          console.log(`Restored ${user.role}: ${user.email}`);
+          createdUsersByEmail[user.email] = restoredUser;
+        } else {
+          // User exists and is active
+          const activeUser = await User.findById(existingUserDoc._id);
+          console.log(`Using existing ${user.role}: ${user.email}`);
+          createdUsersByEmail[user.email] = activeUser;
+        }
+      } catch (err: any) {
+        console.error(`Error processing user ${user.email}:`, err.message);
+        throw err;
       }
-      createdUsersByEmail[user.email] = existingUser;
     }
 
     const studentUser = createdUsersByEmail['amira@ctc.com'];
@@ -73,6 +102,11 @@ const importData = async () => {
     const alexUser = createdUsersByEmail['alex@ctc.com'];
 
     if (!studentUser || !sarahUser || !alexUser) {
+      console.error('Missing users:', {
+        studentUser: !!studentUser,
+        sarahUser: !!sarahUser,
+        alexUser: !!alexUser
+      });
       throw new Error('Required seed users were not created successfully');
     }
 
