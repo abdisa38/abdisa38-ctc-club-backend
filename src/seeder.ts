@@ -17,13 +17,13 @@ const importData = async () => {
 
     // Reset admin credentials
     console.log('Resetting admin credentials...');
-    const adminEmail = 'abdisaawel9@gmail.com';
+    const adminEmail = 'abdisaawel40@gmail.com';
     let adminUser = await User.findOne({ email: adminEmail });
     
     if (adminUser) {
       // Update existing admin
       adminUser.role = 'admin';
-      adminUser.password = 'admin123'; // Will be hashed by pre-save middleware
+      adminUser.password = 'A1B2C3D4E5'; // Will be hashed by pre-save middleware
       await adminUser.save();
       console.log(`✓ Admin credentials updated for: ${adminEmail}`);
     } else {
@@ -31,7 +31,7 @@ const importData = async () => {
       adminUser = await User.create({
         name: 'CTC Platform Admin',
         email: adminEmail,
-        password: 'admin123',
+        password: 'A1B2C3D4E5',
         role: 'admin',
       });
       console.log(`✓ Admin user created: ${adminEmail}`);
