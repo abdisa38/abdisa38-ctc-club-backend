@@ -36,14 +36,32 @@ app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 // Cookie parser
 app.use(cookieParser());
 
-// Enable CORS - Allow all origins for now to fix connection issues
+// Enable CORS - Allow specific origins
+const allowedOrigins = [
+    'https://ctc2026.codes',
+    'https://www.ctc2026.codes',
+    'http://localhost:5173', // Local development
+    'http://localhost:3000', // Alternative local port
+    process.env.CLIENT_URL, // From environment variable
+];
+
+// Add any additional Vercel preview URLs if CLIENT_URL is set
+if (process.env.CLIENT_URL && !allowedOrigins.includes(process.env.CLIENT_URL)) {
+    allowedOrigins.push(process.env.CLIENT_URL);
+}
+
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
+        // Allow requests with no origin (like mobile apps, Postman, or curl requests)
         if (!origin) return callback(null, true);
         
-        // Allow any origin and explicitly return it
-        callback(null, origin);
+        // Check if the origin is in the allowed list
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log(`CORS blocked origin: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -54,7 +72,7 @@ app.use(cors({
 // Additional CORS headers as fallback
 app.use((req: Request, res: Response, next) => {
     const origin = req.headers.origin;
-    if (origin) {
+    if (origin && allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     }
     res.setHeader('Access-Control-Allow-Credentials', 'true');
