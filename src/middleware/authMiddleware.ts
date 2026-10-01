@@ -5,9 +5,11 @@ import User from '../models/userModel';
 
 export interface AuthRequest extends Request {
   user?: any;
+  file?: any;
+  files?: any;
 }
 
-export const protect = expressAsyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const protect = expressAsyncHandler(async (req: any, res: Response, next: NextFunction) => {
   let token;
   
   // Check for token in cookie first
@@ -34,7 +36,7 @@ export const protect = expressAsyncHandler(async (req: AuthRequest, res: Respons
   }
 });
 
-export const optionalProtect = expressAsyncHandler(async (req: AuthRequest, _res: Response, next: NextFunction) => {
+export const optionalProtect = expressAsyncHandler(async (req: any, _res: Response, next: NextFunction) => {
   let token = req.cookies.jwt;
   
   // If no cookie, check Authorization header for Bearer token

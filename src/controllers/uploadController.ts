@@ -2,11 +2,11 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { sendSuccess } from '../utils/apiResponse';
 
-const buildPublicUrl = (req: AuthRequest, filename: string): string => {
+const buildPublicUrl = (req: any, filename: string): string => {
   return `${req.protocol}://${req.get('host')}/uploads/${filename}`;
 };
 
-export const uploadLessonVideo = (req: AuthRequest, res: Response) => {
+export const uploadLessonVideo = (req: any, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No video file uploaded' });
   }
@@ -20,7 +20,7 @@ export const uploadLessonVideo = (req: AuthRequest, res: Response) => {
   }, { message: 'Video uploaded successfully' });
 };
 
-export const uploadLessonResource = (req: AuthRequest, res: Response) => {
+export const uploadLessonResource = (req: any, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No resource file uploaded' });
   }

@@ -7,7 +7,7 @@ import { sendSuccess } from '../utils/apiResponse';
 // @desc    Create a support ticket
 // @route   POST /api/support/tickets
 // @access  Private
-export const submitTicket = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const submitTicket = asyncHandler(async (req: any, res: Response) => {
   const { subject, category, priority, message } = req.body;
 
   const ticket = await Ticket.create({ 
@@ -28,7 +28,7 @@ export const submitTicket = asyncHandler(async (req: AuthRequest, res: Response)
 // @desc    Get list of tickets (user sees own, admin sees all)
 // @route   GET /api/support/tickets
 // @access  Private
-export const getTickets = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getTickets = asyncHandler(async (req: any, res: Response) => {
   const pageSize = Number(req.query.limit) || 12;
   const page = Number(req.query.page) || 1;
 
@@ -59,7 +59,7 @@ export const getTickets = asyncHandler(async (req: AuthRequest, res: Response) =
 // @desc    Get singular ticket by ID
 // @route   GET /api/support/tickets/:id
 // @access  Private
-export const getTicketById = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getTicketById = asyncHandler(async (req: any, res: Response) => {
     const ticket = await Ticket.findById(req.params.id)
         .populate('user', 'name email avatar')
         .populate('assignedTo', 'name email')
@@ -82,7 +82,7 @@ export const getTicketById = asyncHandler(async (req: AuthRequest, res: Response
 // @desc    Reply to a ticket
 // @route   POST /api/support/tickets/:id/reply
 // @access  Private
-export const replyTicket = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const replyTicket = asyncHandler(async (req: any, res: Response) => {
   const { message } = req.body;
   const ticket = await Ticket.findById(req.params.id);
 
@@ -122,7 +122,7 @@ export const replyTicket = asyncHandler(async (req: AuthRequest, res: Response) 
 // @desc    Change ticket status (Close, Resolve)
 // @route   PUT /api/support/tickets/:id/status
 // @access  Private/Admin
-export const changeTicketStatus = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const changeTicketStatus = asyncHandler(async (req: any, res: Response) => {
     const { status } = req.body;
     const ticket = await Ticket.findById(req.params.id);
 
