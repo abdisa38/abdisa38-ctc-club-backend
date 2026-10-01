@@ -25,6 +25,7 @@ dotenv.config();
 connectDB();
 
 const app: Application = express();
+app.set('trust proxy', 1);
 
 // Body parser with increased limit for base64 images
 app.use(express.json({ limit: '10mb' }));

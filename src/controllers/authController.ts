@@ -14,8 +14,17 @@ import { sendPasswordResetCodeEmail } from '../utils/email';
 type OAuthProvider = 'google' | 'github';
 type ThemePreference = 'system' | 'light' | 'dark';
 
-const getServerUrl = () => process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
-const getClientUrl = () => process.env.CLIENT_URL || 'http://localhost:5173';
+const getServerUrl = () => {
+  if (process.env.SERVER_URL) return process.env.SERVER_URL.replace(/\/+$/, '');
+  if (process.env.NODE_ENV === 'production') return 'https://abdisa38-ctc-club-backend.onrender.com';
+  return `http://localhost:${process.env.PORT || 5000}`;
+};
+
+const getClientUrl = () => {
+  if (process.env.CLIENT_URL) return process.env.CLIENT_URL.replace(/\/+$/, '');
+  if (process.env.NODE_ENV === 'production') return 'https://ctc2026.codes';
+  return 'http://localhost:5173';
+};
 
 const getRequestBaseUrl = (req: Request) => {
   const forwardedProtoHeader = req.headers['x-forwarded-proto'];
