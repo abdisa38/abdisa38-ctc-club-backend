@@ -545,7 +545,7 @@ export const getPublicStats = asyncHandler(async (req: Request, res: Response): 
         const hash = crypto.createHash('md5').update(emailTrimmed).digest('hex');
         const encodedName = encodeURIComponent(student.name || 'Student');
         const fallback = https://ui-avatars.com/api/?name=&background=0284c7&color=ffffff&bold=true;
-        const avatarUrl = https://www.gravatar.com/avatar/?s=80&d=;
+        const avatarUrl = https://www.gravatar.com/avatar/?s=80&d=\;
         return {
             name: student.name || 'Student',
             avatar: avatarUrl
