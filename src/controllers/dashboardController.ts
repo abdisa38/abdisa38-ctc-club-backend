@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { AuthRequest } from '../middleware/authMiddleware';
@@ -524,15 +525,39 @@ export const getPublicStats = asyncHandler(async (req: Request, res: Response): 
     const totalUsers = await User.countDocuments({ role: 'student', isDeleted: false });
     const totalCourses = await Course.countDocuments({ isDeleted: false, status: 'published' });
     const expertInstructors = await User.countDocuments({ role: 'instructor', isDeleted: false });
-    
-    // As a fun proxy for "certificates issued", we can use total completed courses across all students
     const totalCompleted = await Progress.countDocuments({ isCompleted: true });
+
+    const recentStudents = await User.find({ role: 'student', isDeleted: false })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .select('name email avatar');
+
+    const DEFAULT_AVATAR = 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg';
+
+    const studentAvatars = recentStudents.map(student => {
+        if (student.avatar && student.avatar !== DEFAULT_AVATAR && student.avatar.trim() !== '') {
+            return {
+                name: student.name || 'Student',
+                avatar: student.avatar
+            };
+        }
+        const emailTrimmed = (student.email || '').trim().toLowerCase();
+        const hash = crypto.createHash('md5').update(emailTrimmed).digest('hex');
+        const encodedName = encodeURIComponent(student.name || 'Student');
+        const fallback = https://ui-avatars.com/api/?name=&background=0284c7&color=ffffff&bold=true;
+        const avatarUrl = https://www.gravatar.com/avatar/?s=80&d=;
+        return {
+            name: student.name || 'Student',
+            avatar: avatarUrl
+        };
+    }).slice(0, 4);
 
     sendSuccess(res, {
         activeStudents: totalUsers,
         videoCourses: totalCourses,
         instructors: expertInstructors,
         certificates: totalCompleted,
+        studentAvatars,
     });
 });
 
